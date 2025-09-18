@@ -3,180 +3,432 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amma | Lyrical Video</title>
+    <title>Amma | Cinematic Lyrical Video</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Noto Sans Telugu', sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-            overflow: hidden; /* Prevent body scrolling */
-            
-            /* --- Background Image Setup --- */
-            background-image: url('hnuiihnihnihn.jpeg'); /* Make sure this path is correct */
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            background: #000;
+            color: #ffffff;
+            overflow: hidden;
+            height: 100vh;
             position: relative;
         }
-
-        /* Dark overlay for better text readability */
-        body::before {
-            content: '';
-            position: absolute;
+        
+        /* NEW: Styles for the play overlay */
+        #play-overlay {
+            position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6); 
-            z-index: 1;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 200;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: opacity 0.5s ease;
         }
 
-        /* Ensure all content appears above the overlay */
-        h1, audio, .lyrics-container {
-            position: relative;
-            z-index: 2;
+        #play-button {
+            font-size: 5em;
+            color: white;
+            opacity: 0.7;
+            transition: transform 0.2s ease;
+        }
+
+        #play-overlay:hover #play-button {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+        /* End of new styles */
+
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('1.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -3;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -2;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255,182,255,0.8) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+            opacity: 0;
+            will-change: transform, opacity;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0) scale(0.5); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-100vh) translateX(100px) scale(1); opacity: 0; }
+        }
+
+        .bokeh-overlay {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 0.3;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255, 99, 199, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(147, 99, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 50% 20%, rgba(255, 199, 99, 0.2) 0%, transparent 50%);
+            animation: bokehMove 25s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+
+        @keyframes bokehMove {
+            from { transform: scale(1) rotate(0deg) translateX(0); }
+            to { transform: scale(1.1) rotate(5deg) translateX(20px); }
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+            z-index: 10;
+            text-align: center;
         }
 
         h1 {
-            color: #bb86fc;
-            margin-bottom: 20px;
             font-size: 2.5em;
-            text-shadow: 0 0 15px rgba(187, 134, 252, 0.7);
+            font-weight: 900;
+            background: linear-gradient(45deg, #ff6b9d, #ffd93d, #6bcf7f, #4ecdc4, #a8e6cf);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientText 8s ease-in-out infinite;
+            text-shadow: 0 5px 15px rgba(255,107,157,0.3);
+            letter-spacing: 2px;
+        }
+
+        @keyframes gradientText {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .audio-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: none;
         }
 
         audio {
-            width: 80%;
-            max-width: 600px;
-            margin-bottom: 30px;
-            filter: invert(1) hue-rotate(180deg);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
-            border-radius: 5px;
+            width: 300px;
+            height: 40px;
+            filter: invert(1) hue-rotate(320deg);
+            opacity: 0.9;
         }
 
-        .lyrics-container {
+        .video-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             width: 90%;
-            max-width: 700px;
-            height: 300px;
-            overflow: hidden;
-            background-color: rgba(30, 30, 30, 0.7); /* Semi-transparent background */
-            border-radius: 15px;
-            padding: 30px 20px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+            max-width: 1200px;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1000px;
         }
 
-        .lyrics-container p {
-            margin: 10px 0;
-            font-size: 1.3em;
-            color: #aaa;
-            line-height: 1.5;
-            font-weight: 400;
-            opacity: 0.7;
-            transform: scale(0.95);
-            /* Smoother animation */
-            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+        .lyrics-display {
+            text-align: center;
+            width: 100%;
+            position: relative;
         }
 
-        .lyrics-container p.active {
-            color: #ffffff;
-            font-weight: 900; /* Extra bold for active line */
-            font-size: 2em; /* Much larger active line */
-            transform: scale(1.15); /* More prominent scaling */
+        .lyric-line {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 0;
+            font-size: 2.5em;
+            font-weight: 700;
+            opacity: 0;
+            filter: blur(10px);
+            transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1),
+                        opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1),
+                        filter 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            text-shadow: 0 0 30px rgba(0,0,0,0.8);
+            line-height: 1.4;
+            padding: 20px;
+            will-change: transform, opacity, filter;
+            transform: translateY(150px) scale(0.7);
+        }
+
+        .lyric-line.pre-active {
+            opacity: 0.3;
+            filter: blur(3px);
+            transform: translateY(100px) scale(0.8);
+            color: rgba(255,255,255,0.5);
+        }
+
+        .lyric-line.active {
             opacity: 1;
-            /* Enhanced glow effect */
-            text-shadow: 0 0 15px #bb86fc, 0 0 25px rgba(187, 134, 252, 0.5); 
+            filter: blur(0);
+            transform: translateY(-50%) scale(1);
+            color: #ffffff;
+            animation: activePulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes activePulse {
+            0%, 100% {
+                transform: translateY(-50%) scale(1);
+                text-shadow: 0 0 30px rgba(255,107,157,0.8);
+            }
+            50% {
+                transform: translateY(-50%) scale(1.02);
+                text-shadow: 0 0 40px rgba(255,107,157,1);
+            }
+        }
+
+        .lyric-line.active .word {
+            display: inline-block;
+            animation: wordPop 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            animation-fill-mode: both;
+        }
+
+        .lyric-line.active .word:nth-child(1) { animation-delay: 0s; }
+        .lyric-line.active .word:nth-child(2) { animation-delay: 0.1s; }
+        .lyric-line.active .word:nth-child(3) { animation-delay: 0.2s; }
+        .lyric-line.active .word:nth-child(4) { animation-delay: 0.3s; }
+        .lyric-line.active .word:nth-child(5) { animation-delay: 0.4s; }
+        .lyric-line.active .word:nth-child(6) { animation-delay: 0.5s; }
+
+        @keyframes wordPop {
+            0% { transform: translateY(20px) scale(0.5); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .lyric-line.post-active {
+            opacity: 0;
+            filter: blur(5px);
+            transform: translateY(-150px) scale(0.7);
+            color: rgba(255,255,255,0.2);
+        }
+
+        .lyric-line.music-break { font-family: 'Caveat', cursive; font-style: italic; color: #ffd93d; }
+        .lyric-line.english { font-family: 'Caveat', cursive; background: linear-gradient(90deg, #ff6b9d, #ffd93d); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .glow-effect {
+            position: absolute; top: 50%; left: 50%; width: 80%; height: 200px;
+            background: radial-gradient(ellipse at center, rgba(255,107,157,0.3) 0%, transparent 70%);
+            filter: blur(40px); opacity: 0;
+            transition: opacity 1.2s ease, transform 1.2s ease; pointer-events: none;
+            z-index: -1; will-change: opacity, transform; transform: translate(-50%, -50%) scale(0.8);
+        }
+
+        .glow-effect.active { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+        .heart {
+            position: fixed; color: rgba(255,107,157,0.8); font-size: 20px;
+            animation: floatHeart 6s ease-in; z-index: 1;
+            will-change: transform, opacity; bottom: -50px;
+        }
+
+        @keyframes floatHeart {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
     </style>
 </head>
 <body>
+    <div id="play-overlay">
+        <div id="play-button">▶</div>
+    </div>
 
-    <h1>అమ్మ (Amma)</h1>
+    <div class="video-background"></div>
+    <div class="bokeh-overlay"></div>
+    <div class="particles" id="particles"></div>
 
-    <audio id="audio-player" controls>
-        <source src="audio/7.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
+    <div class="header">
+        <h1>అమ్మ</h1>
+    </div>
 
-    <div class="lyrics-container" id="lyrics-container">
-        <p data-time="0"></p> 
-        <p data-time="5.0">అమ్మ నీ ప్రేమకు సాటి ఎవరు లేరు</p>
-        <p data-time="10.0">నీ చల్లని చూపులే నాకు వెలుగు తీరు</p>
-        <p data-time="16.0">నువ్వు జోల పాడిన ఆ లాలి పాట</p>
-        <p data-time="20.0">నా గుండెలో నిలిచిపోయే తీయని పాట</p>
-        <p data-time="24.0">అమ్మా నీవే నా సర్వస్వం</p>
-        <p data-time="30.0">నీ రుణం తీర్చకోలేను జన్మ జన్మ</p>
-        <p data-time="34.0">ఈ మాతృ దినోత్సవం నీకే అంకితం</p>
-        <p data-time="40.0">నీ పాదాలకు నా హృదయ నమస్కారం</p>
-        <p data-time="45.0">(Music!)</p>
-        <p data-time="56.0">చిన్నప్పుడు నన్ను లాలించినావు</p>
-        <p data-time="61.0">ప్రతి అడుగులో తోడుగా నిలిచినావు</p>
-        <p data-time="66.0">నా కష్టాలలో ఓదార్పువు నీవే</p>
-        <p data-time="71.0">నా విజయాలలో మొదటి చప్పట్లు నీవే</p>
-        <p data-time="76.0">అమ్మా నీవే నా సర్వస్వం</p>
-        <p data-time="81.0">నీ రుణం తీర్చకోలేను జన్మ జన్మ</p>
-        <p data-time="85.0">ఈ మాతృ దినోత్సవం నీకే అంకితం</p>
-        <p data-time="91.0">నీ పాదాలకు నా హృదయ నమస్కారం</p>
-        <p data-time="96.0">(Music!)</p>
-        <p data-time="107.0">నీ సహనం ఎంతో గొప్పది అమ్మ</p>
-        <p data-time="112.0">నీ త్యాగం వెలకట్టలేనిది అమ్మ</p>
-        <p data-time="117.0">ఎల్లప్పుడూ నీ ప్రేమ నా చుట్టూ ఉంటుంది</p>
-        <p data-time="122.0">నీ ఆశీర్వాదం నాకు శ్రీరామరక్ష అవుతుంది</p>
-        <p data-time="127.0">అమ్మా, నీవే నా సర్వస్వం</p>
-        <p data-time="133.0">నీ రుణం తీర్చకోలేను జన్మ జన్మ</p>
-        <p data-time="138.0">ఈ మాతృ దినోత్సవం నీకే అంకితం</p>
-        <p data-time="144.0">నీ పాదాలకు నా హృదయ నమస్కారం</p>
-        <p data-time="149.0">Happy Mother's Day, అమ్మ</p>
-        <p data-time="152.0">నువ్వు ఎల్లప్పుడూ సంతోషంగా ఉండాలని కోరుకుంటున్నాను</p>
-        <p data-time="157">The End!</p>
-        <p data-time="175.0"> </p>
+    <div class="video-container">
+        <div class="glow-effect" id="glowEffect"></div>
+        <div class="lyrics-display" id="lyricsDisplay"></div>
+    </div>
+
+    <div class="audio-container">
+        <audio id="audioPlayer" controls>
+            <source src="audio/7.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
     </div>
 
     <script>
-        const audioPlayer = document.getElementById('audio-player');
-        const lyricsContainer = document.getElementById('lyrics-container');
-        const lyricLines = lyricsContainer.querySelectorAll('p');
+        const lyricsData = [
+            { time: 5.0, text: "అమ్మ నీ ప్రేమకు సాటి ఎవరు లేరు", class: "" },
+            { time: 10.0, text: "నీ చల్లని చూపులే నాకు వెలుగు తీరు", class: "" },
+            { time: 16.0, text: "నువ్వు జోల పాడిన ఆ లాలి పాట", class: "" },
+            { time: 20.0, text: "నా గుండెలో నిలిచిపోయే తీయని పాట", class: "" },
+            { time: 24.0, text: "అమ్మా నీవే నా సర్వస్వం", class: "" },
+            { time: 30.0, text: "నీ రుణం తీర్చకోలేను జన్మ జన్మ", class: "" },
+            { time: 34.0, text: "ఈ మాతృ దినోత్సవం నీకే అంకితం", class: "" },
+            { time: 40.0, text: "నీ పాదాలకు నా హృదయ నమస్కారం", class: "" },
+            { time: 45.0, text: "♪ ♫ Music ♫ ♪", class: "music-break" },
+            { time: 56.0, text: "చిన్నప్పుడు నన్ను లాలించినావు", class: "" },
+            { time: 61.0, text: "ప్రతి అడుగులో తోడుగా నిలిచినావు", class: "" },
+            { time: 66.0, text: "నా కష్టాలలో ఓదార్పువు నీవే", class: "" },
+            { time: 71.0, text: "నా విజయాలలో మొదటి చప్పట్లు నీవే", class: "" },
+            { time: 76.0, text: "అమ్మా నీవే నా సర్వస్వం", class: "" },
+            { time: 81.0, text: "నీ రుణం తీర్చకోలేను జన్మ జన్మ", class: "" },
+            { time: 85.0, text: "ఈ మాతృ దినోత్సవం నీకే అంకితం", class: "" },
+            { time: 91.0, text: "నీ పాదాలకు నా హృదయ నమస్కారం", class: "" },
+            { time: 96.0, text: "♪ ♫ Music ♫ ♪", class: "music-break" },
+            { time: 107.0, text: "నీ సహనం ఎంతో గొప్పది అమ్మ", class: "" },
+            { time: 112.0, text: "నీ త్యాగం వెలకట్టలేనిది అమ్మ", class: "" },
+            { time: 117.0, text: "ఎల్లప్పుడూ నీ ప్రేమ నా చుట్టూ ఉంటుంది", class: "" },
+            { time: 122.0, text: "నీ ఆశీర్వాదం నాకు శ్రీరామరక్ష అవుతుంది", class: "" },
+            { time: 127.0, text: "అమ్మా, నీవే నా సర్వస్వం", class: "" },
+            { time: 133.0, text: "నీ రుణం తీర్చకోలేను జన్మ జన్మ", class: "" },
+            { time: 138.0, text: "ఈ మాతృ దినోత్సవం నీకే అంకితం", class: "" },
+            { time: 144.0, text: "నీ పాదాలకు నా హృదయ నమస్కారం", class: "" },
+            { time: 149.0, text: "Happy Mother's Day, అమ్మ", class: "english" },
+            { time: 152.0, text: "నువ్వు ఎల్లప్పుడూ సంతోషంగా ఉండాలని కోరుకుంటున్నాను", class: "" },
+            { time: 157, text: "♥ The End ♥", class: "english" }
+        ];
+
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = particle.style.height = Math.random() * 10 + 5 + 'px';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 20 + 20) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '♥';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 5) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 8000);
+        }
+
+        function wrapWords(text) {
+            return text.split(' ').map(word => `<span class="word">${word}</span>`).join(' ');
+        }
+
+        const audioPlayer = document.getElementById('audioPlayer');
+        const lyricsDisplay = document.getElementById('lyricsDisplay');
+        const glowEffect = document.getElementById('glowEffect');
+        let currentLyricIndex = -1;
+        let lyricElements = [];
+        
+        // NEW: Get the play overlay element
+        const playOverlay = document.getElementById('play-overlay');
+
+        lyricsData.forEach((lyric) => {
+            const lyricElement = document.createElement('div');
+            lyricElement.className = `lyric-line ${lyric.class}`;
+            lyricElement.innerHTML = wrapWords(lyric.text);
+            lyricsDisplay.appendChild(lyricElement);
+            lyricElements.push(lyricElement);
+        });
 
         audioPlayer.addEventListener('timeupdate', () => {
             const currentTime = audioPlayer.currentTime;
-            let activeLineIndex = -1;
-
-            // Find which line should be active
-            lyricLines.forEach((line, index) => {
-                const lineTime = parseFloat(line.getAttribute('data-time'));
-                const nextLine = lyricLines[index + 1];
-                const nextLineTime = nextLine ? parseFloat(nextLine.getAttribute('data-time')) : Infinity;
-
-                if (currentTime >= lineTime && currentTime < nextLineTime) {
-                    activeLineIndex = index;
-                }
+            let newLyricIndex = lyricsData.findIndex((lyric, index) => {
+                const nextLyric = lyricsData[index + 1];
+                return currentTime >= lyric.time && (!nextLyric || currentTime < nextLyric.time);
             });
 
-            // Update classes and scroll
-            lyricLines.forEach((line, index) => {
-                if (index === activeLineIndex) {
-                    if (!line.classList.contains('active')) {
-                        line.classList.add('active');
-                        // Calculate the precise scroll position to center the active line
-                        const scrollPosition = line.offsetTop - (lyricsContainer.clientHeight / 2) + (line.offsetHeight / 2);
-                        
-                        lyricsContainer.scrollTo({
-                            top: scrollPosition,
-                            behavior: 'smooth'
-                        });
-                    }
-                } else {
-                    line.classList.remove('active');
-                }
-            });
+            if (newLyricIndex !== currentLyricIndex) {
+                lyricElements.forEach((el, idx) => {
+                    el.classList.remove('active', 'pre-active', 'post-active');
+                    if (idx === newLyricIndex) { el.classList.add('active'); }
+                    else if (idx === newLyricIndex + 1) { el.classList.add('pre-active'); }
+                    else if (idx < newLyricIndex) { el.classList.add('post-active'); }
+                });
+
+                if (newLyricIndex >= 0) { glowEffect.classList.add('active'); }
+                else { glowEffect.classList.remove('active'); }
+
+                currentLyricIndex = newLyricIndex;
+            }
+        });
+
+        audioPlayer.addEventListener('ended', () => {
+            currentLyricIndex = -1;
+            lyricElements.forEach(el => { el.classList.remove('active', 'pre-active', 'post-active'); });
+            glowEffect.classList.remove('active');
+        });
+
+        // NEW: Logic for the play overlay
+        playOverlay.addEventListener('click', () => {
+            audioPlayer.play();
+            playOverlay.style.opacity = '0';
+            // Remove the overlay from the DOM after it fades out
+            setTimeout(() => {
+                playOverlay.style.display = 'none';
+            }, 500);
+        }, { once: true }); // { once: true } makes the event listener run only one time
+
+        createParticles();
+        setInterval(createHeart, 2000);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (audioPlayer.paused) { audioPlayer.play(); }
+                else { audioPlayer.pause(); }
+            }
         });
     </script>
-
 </body>
 </html>
