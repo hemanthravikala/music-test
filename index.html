@@ -23,24 +23,21 @@
             position: relative;
         }
 
-        /* Animated gradient background */
+        /* UPDATED: Background image with overlay */
         .video-background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg, #0d0015, #1a0033, #2d004d, #1a0033);
-            background-size: 400% 400%;
-            animation: gradientShift 20s ease-in-out infinite; /* SMOOTHER: Longer duration and ease-in-out */
+            /* A dark overlay (rgba) on top of the image url() */
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('1.png');
+            background-size: cover; /* Ensures the image covers the whole screen */
+            background-position: center; /* Centers the image */
+            background-repeat: no-repeat;
             z-index: -3;
         }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        /* The old gradient animation is no longer needed */
 
         /* Floating particles */
         .particles {
@@ -57,9 +54,9 @@
             position: absolute;
             background: radial-gradient(circle, rgba(255,182,255,0.8) 0%, transparent 70%);
             border-radius: 50%;
-            animation: float 20s infinite ease-in-out; /* SMOOTHER: Added ease-in-out */
+            animation: float 20s infinite ease-in-out;
             opacity: 0;
-            will-change: transform, opacity; /* SMOOTHER: Performance hint */
+            will-change: transform, opacity;
         }
 
         @keyframes float {
@@ -92,7 +89,7 @@
                 radial-gradient(circle at 20% 50%, rgba(255, 99, 199, 0.3) 0%, transparent 50%),
                 radial-gradient(circle at 80% 50%, rgba(147, 99, 255, 0.3) 0%, transparent 50%),
                 radial-gradient(circle at 50% 20%, rgba(255, 199, 99, 0.2) 0%, transparent 50%);
-            animation: bokehMove 25s ease-in-out infinite alternate; /* SMOOTHER: Longer, alternating animation */
+            animation: bokehMove 25s ease-in-out infinite alternate;
             will-change: transform;
         }
 
@@ -120,7 +117,7 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: gradientText 8s ease-in-out infinite; /* SMOOTHER: Slower animation */
+            animation: gradientText 8s ease-in-out infinite;
             text-shadow: 0 5px 15px rgba(255,107,157,0.3);
             letter-spacing: 2px;
         }
@@ -144,7 +141,6 @@
             border-radius: 50px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
             border: 1px solid rgba(255,255,255,0.2);
-            display: none;
         }
 
         audio {
@@ -179,20 +175,19 @@
             position: absolute;
             width: 100%;
             left: 0;
-            top: 0; /* SMOOTHER: Top is 0, transform handles positioning */
+            top: 0;
             font-size: 2.5em;
             font-weight: 700;
             opacity: 0;
             filter: blur(10px);
-            /* SMOOTHER: Longer, more specific, and smoother easing function */
             transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1),
                         opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1),
                         filter 1.2s cubic-bezier(0.25, 1, 0.5, 1);
             text-shadow: 0 0 30px rgba(0,0,0,0.8);
             line-height: 1.4;
             padding: 20px;
-            will-change: transform, opacity, filter; /* SMOOTHER: Performance hint */
-            transform: translateY(150px) scale(0.7); /* SMOOTHER: Default state is off-screen */
+            will-change: transform, opacity, filter;
+            transform: translateY(150px) scale(0.7);
         }
 
         .lyric-line.pre-active {
@@ -205,12 +200,11 @@
         .lyric-line.active {
             opacity: 1;
             filter: blur(0);
-            transform: translateY(-50%) scale(1); /* SMOOTHER: Centered position */
+            transform: translateY(-50%) scale(1);
             color: #ffffff;
-            animation: activePulse 2s ease-in-out infinite; /* SMOOTHER: New pulse animation */
+            animation: activePulse 2s ease-in-out infinite;
         }
         
-        /* SMOOTHER: New, performant pulse animation using transform instead of text-shadow */
         @keyframes activePulse {
             0%, 100% {
                 transform: translateY(-50%) scale(1);
@@ -224,7 +218,7 @@
 
         .lyric-line.active .word {
             display: inline-block;
-            animation: wordPop 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* SMOOTHER: Softer easing */
+            animation: wordPop 0.6s cubic-bezier(0.25, 1, 0.5, 1);
             animation-fill-mode: both;
         }
 
@@ -296,10 +290,10 @@
             position: fixed;
             color: rgba(255,107,157,0.8);
             font-size: 20px;
-            animation: floatHeart 6s ease-in; /* SMOOTHER: ease-in for a better start */
+            animation: floatHeart 6s ease-in;
             z-index: 1;
             will-change: transform, opacity;
-            bottom: -50px; /* SMOOTHER: Start from off-screen */
+            bottom: -50px;
         }
 
         @keyframes floatHeart {
@@ -393,7 +387,7 @@
             heart.style.left = Math.random() * 100 + 'vw';
             heart.style.animationDuration = (Math.random() * 3 + 5) + 's';
             document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 8000); // Increased removal time
+            setTimeout(() => heart.remove(), 8000);
         }
 
         // Convert text to word spans for animation
@@ -425,7 +419,6 @@
             });
 
             if (newLyricIndex !== currentLyricIndex) {
-                // SMOOTHER: New logic using only class manipulation for fluid transitions
                 lyricElements.forEach((el, idx) => {
                     el.classList.remove('active', 'pre-active', 'post-active');
                     if (idx === newLyricIndex) {
